@@ -21,6 +21,7 @@ class CameraInfo:
     enable_face_record = False  # 是否启用人脸记录
     enable_face_recognition = False  # 是否启用人脸识别
     enable_silent_detected = False  # 无行人时系统是否静默
+    enable_action_recognition = True  # 是否启用动作识别
 
 
 @dataclass
@@ -76,6 +77,19 @@ class WriterInfo:
 
 
 @dataclass
+class ActionPersonInfo:
+    action_label = "None"  # drinking, eating, hiding, tearing
+    action_confidence = 0.0  # 置信度
+    action_roi = None  # 用于动作识别的ROI区域
+    is_abnormal = False  # 是否异常行为（根据业务逻辑）
+
+@dataclass
+class ActionInfo:
+    person_list: List[ActionPersonInfo] = field(default_factory=list)
+    abnormal_count = 0  # 异常行为计数
+
+
+@dataclass
 class DataStructure:
     def __init__(self):
         self.frame = None
@@ -84,6 +98,8 @@ class DataStructure:
         self.reid_info = ReidInfo()
         self.face_info = FaceInfo()
         self.writer_info = WriterInfo()
+
+        self.action_info = ActionInfo()  # 新增这行
 
     def fill_camera_info(self, basic_info):
         self.camera_info.k = basic_info['k']
@@ -103,6 +119,7 @@ class DataStructure:
         self.camera_info.enable_face_record = basic_info['enable_face_record']
         self.camera_info.enable_face_recognition = basic_info['enable_face_recognition']
         self.camera_info.enable_silent_detected = basic_info['enable_silent_detected']
+        self.camera_info.enable_action_recognition = basic_info['enable_action_recognition']
 
     def get_tracker_memory_data(self):
         person_list = []
@@ -125,6 +142,19 @@ class DataStructure:
                 "is_verified": fp.is_verified,
                 "is_new": fp.is_new,
                 "image_path": fp.image_path
+            }
+            person_list.append(item)
+        return person_list
+
+    # 添加获取动作记忆数据的方法
+    def get_action_memory_data(self):
+        person_list = []
+        for rp, ap in zip(self.reid_info.person_list, self.action_info.person_list):
+            item = {
+                "person_id": rp.person_reid,
+                "action_label": ap.action_label,
+                "action_confidence": ap.action_confidence,
+                "is_abnormal": ap.is_abnormal
             }
             person_list.append(item)
         return person_list

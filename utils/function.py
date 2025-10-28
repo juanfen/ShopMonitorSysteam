@@ -277,7 +277,9 @@ def check_gathering_by_clustering(centroids, eps=50, min_samples=3, cluster_size
         "cluster_size_threshold": cluster_size_threshold
     }
     e = time.time()
-    print(e - s)
+    # print(e - s)
+    processing_time = e - s
+    logger.debug(f"DBSCAN聚类耗时: {processing_time:.3f}s")
     return is_gathering, detailed_info
 
 

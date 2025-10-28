@@ -6,26 +6,32 @@ import numpy as np
 from queue import Queue
 from loguru import logger
 
-from module import PeopleTracker, FaceRecognition, ReID, FrameDifference, VideoWriter, Post
+from module import PeopleTracker, FaceRecognition, ReID, FrameDifference, VideoWriter, Post, ActionRecognition
 from .thread import Camera
 from utils import set_logger
 
 
 def plot_info(data):
     k = data.camera_info.k
-    for p, rp, fp in zip(data.tracker_info.person_list, data.reid_info.person_list, data.face_info.person_list):
+    for p, rp, fp, ap in zip(data.tracker_info.person_list, data.reid_info.person_list, data.face_info.person_list, data.action_info.person_list):
         name = fp.person_name
         x1, y1, x2, y2 = p.xyxy
         color = p.color
         cv2.rectangle(data.frame, (x1, y1), (x2, y2), color, 5)
 
         person_reid = rp.person_reid
-        label = f"ID:{person_reid} {name}"
+        action_text = f"{ap.action_label}({ap.action_confidence:.2f})" if ap.action_label != "None" else ""
+        label = f"ID:{person_reid} {name} {action_text}"
         cv2.putText(data.frame, label, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.6, color, 3)
 
         track = p.track
         points = np.hstack(track).astype(np.int32).reshape((-1, 1, 2))
         cv2.polylines(data.frame, [points], isClosed=False, color=(0, 255, 0), thickness=5)
+
+    # 显示异常行为计数
+    if hasattr(data.action_info, 'abnormal_count') and data.action_info.abnormal_count > 0:
+        cv2.putText(data.frame, f"Abnormal Actions: {data.action_info.abnormal_count}",
+                    (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
     cv2.line(data.frame, (k, 0), (k, data.frame.shape[0] - 1), (0, 0, 255), 10)
 
 
@@ -53,6 +59,9 @@ def monitor(config, g_idx, info):
     tracker_dict = {item['name']: PeopleTracker(config) for item in config['camera']['group'][g_idx][group_name]['ip']}
     reid = ReID(config)
     recognizer = FaceRecognition(config)
+
+    action_recognizer = ActionRecognition(config)  # 新增
+
     writer = VideoWriter(config)
     post = Post(config)
 
@@ -79,6 +88,7 @@ def monitor(config, g_idx, info):
         person_lock = data.tracker_info.person_lock
         reid.get_reid_result(data)
         recognizer.get_recognizer_result(data)
+        action_recognizer.get_action_result(data)  # 新增
 
         # 3. 绘制结果
         plot_info(data)

@@ -44,12 +44,26 @@ class FaceRecognition:
             if tid in self.tracking_records.keys():
                 del self.tracking_records[tid]
 
+    # def reload_features(self):
+    #     customer_ids = os.listdir(self.path)
+    #     for customer_id in customer_ids:
+    #         if customer_id not in self.records:
+    #             customer_feature_root = os.path.join(self.path, customer_id)
+    #             customer_feature_paths = [os.path.join(customer_feature_root, it) for it in os.listdir(customer_feature_root)]
+    #             self.names.extend([customer_id] * len(customer_feature_paths))
+    #             self.features.extend([np.load(p) for p in customer_feature_paths])
+    #     self.features_matrix = np.array(self.features)
+
     def reload_features(self):
         customer_ids = os.listdir(self.path)
         for customer_id in customer_ids:
             if customer_id not in self.records:
                 customer_feature_root = os.path.join(self.path, customer_id)
-                customer_feature_paths = [os.path.join(customer_feature_root, it) for it in os.listdir(customer_feature_root)]
+                # 添加检查：确保路径存在且是目录
+                if not os.path.exists(customer_feature_root) or not os.path.isdir(customer_feature_root):
+                    continue
+                customer_feature_paths = [os.path.join(customer_feature_root, it) for it in
+                                          os.listdir(customer_feature_root)]
                 self.names.extend([customer_id] * len(customer_feature_paths))
                 self.features.extend([np.load(p) for p in customer_feature_paths])
         self.features_matrix = np.array(self.features)
@@ -139,7 +153,9 @@ class FaceRecognition:
                 fp.is_new = False
             else:
                 fp.retry_times += 1
-                print(fp.retry_times)
+                if self.config['enable_debug']:
+                    logger.debug(f"人脸识别重试: 人员ID {person_id}, 次数 {fp.retry_times}")
+                # print(fp.retry_times)
                 if fp.retry_times >= self.fr_mqt and data.camera_info.enable_face_record:
                     generated_uuid = str(uuid.uuid4())
                     os.makedirs(os.path.join(self.path, generated_uuid), exist_ok=True)
