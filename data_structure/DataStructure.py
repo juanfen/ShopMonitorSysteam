@@ -51,14 +51,6 @@ class FacePersonInfo:
     image_path = ""  # 新录入的人需要保存一张人脸图像 仅在 is_new 为 True 时有值
 
 
-# @dataclass
-# class ActionPersonInfo:
-#     action_label = "None"  # drinking, eating, hiding, tearing
-#     action_confidence = 0.0  # 置信度
-#     action_roi = None  # 用于动作识别的ROI区域
-#     is_abnormal = False  # 是否异常行为（根据业务逻辑）
-
-
 @dataclass
 class TrackerInfo:
     person_list: List[PersonInfo] = field(default_factory=list)
@@ -85,26 +77,49 @@ class WriterInfo:
 
 
 @dataclass
-class ActionInfo:
-    # person_list: List[ActionPersonInfo] = field(default_factory=list)
-    # abnormal_count = 0  # 异常行为计数
+class ActionPersonInfo:
     action_label = "None"  # drinking, eating, hiding, tearing
     action_confidence = 0.0  # 置信度
-    # action_roi = None  # 用于动作识别的ROI区域
+    action_roi = None  # 用于动作识别的ROI区域
     is_abnormal = False  # 是否异常行为（根据业务逻辑）
+
+@dataclass
+class ActionInfo:
+    person_list: List[ActionPersonInfo] = field(default_factory=list)
+    abnormal_count = 0  # 异常行为计数
 
 
 @dataclass
 class DataStructure:
     def __init__(self):
         self.frame = None
-        self.clip = None
-        self.camera_info = None
+        self.camera_info = CameraInfo()
         self.tracker_info = TrackerInfo()
         self.reid_info = ReidInfo()
         self.face_info = FaceInfo()
         self.writer_info = WriterInfo()
+
         self.action_info = ActionInfo()  # 新增这行
+
+    def fill_camera_info(self, basic_info):
+        self.camera_info.k = basic_info['k']
+
+        self.camera_info.rate = basic_info['rate']
+        self.camera_info.name = basic_info['name']
+        self.camera_info.port = basic_info['port']
+
+        self.camera_info.device = basic_info['device']
+        self.camera_info.enable_reid = basic_info['enable_reid']
+
+        self.camera_info.enable_writer = basic_info['enable_writer']
+        self.camera_info.enable_crossed_writer = basic_info['enable_crossed_writer']
+        self.camera_info.enable_abnormal_writer = basic_info['enable_abnormal_writer']
+        self.camera_info.cross_direction = basic_info['cross_direction']
+
+        self.camera_info.enable_face_record = basic_info['enable_face_record']
+        self.camera_info.enable_face_recognition = basic_info['enable_face_recognition']
+        self.camera_info.enable_silent_detected = basic_info['enable_silent_detected']
+        self.camera_info.enable_action_recognition = basic_info['enable_action_recognition']
 
     def get_tracker_memory_data(self):
         person_list = []

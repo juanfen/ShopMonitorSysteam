@@ -26,21 +26,20 @@ class Manager:
             config['static_root'],
             config['static']['face_features']
         )
-        # if not os.path.exists(self.feat_dir):
-        #     full_init_insightface(self.data_dir, self.feat_dir, name=config['face recognition']['model'])
+        if not os.path.exists(self.feat_dir):
+            full_init_insightface(self.data_dir, self.feat_dir, name=config['face recognition']['model'])
 
     def start(self):
         for process in self.monitor_list:
             process.start()
 
     def restart(self):
-        # flag = True
-        # if time.time() - self.last_check > self.config['manager']['restart_time']:
-        #     flag = incremental_init_insightface(self.data_dir, self.feat_dir, name=self.config['face recognition']['model'])
-        #     self.last_check = time.time()
+        flag = True
+        if time.time() - self.last_check > self.config['manager']['restart_time']:
+            flag = incremental_init_insightface(self.data_dir, self.feat_dir, name=self.config['face recognition']['model'])
+            self.last_check = time.time()
         for i in range(self.group_num):
-            # if not self.monitor_list[i].is_alive() or not flag:
-            if not self.monitor_list[i].is_alive():
+            if not self.monitor_list[i].is_alive() or not flag:
                 self.monitor_list[i].terminate()
                 self.monitor_list[i].join()
                 self.monitor_list[i].close()

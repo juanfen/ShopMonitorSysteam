@@ -59,7 +59,9 @@ def monitor(config, g_idx, info):
     tracker_dict = {item['name']: PeopleTracker(config) for item in config['camera']['group'][g_idx][group_name]['ip']}
     reid = ReID(config)
     recognizer = FaceRecognition(config)
+
     action_recognizer = ActionRecognition(config)  # 新增
+
     writer = VideoWriter(config)
     post = Post(config)
 
