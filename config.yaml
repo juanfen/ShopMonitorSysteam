@@ -21,7 +21,7 @@ log:
   format: "<green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green> | <level>{level: <8}</level> | <cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>"
 
 # 静态文件根目录
-static_root: "/mnt/Data/wuhao/static" # "D:/dataset/static"
+static_root: "D:/dataset/static" # "D:/dataset/static"
 static:
   model: "pt"
   log: "log"
@@ -40,19 +40,19 @@ camera:
         enable_writer: True
         device: 'cpu'
         ip:
-          - name: "192.168.121.153"
-            port: "rtsp://admin:kemande1206@192.168.121.153/Streaming/Channels/101?cmip=192.168.121.153"
+          - name: "192.168.121.248"
+            port: "rtsp://admin:kemande1206@192.168.121.248/Streaming/Channels/101?cmip=192.168.121.248"
             rate: 0.5
             k: 1000
             enable_silent_detected: True
-            enable_face_record: True
+            enable_face_record: False
             enable_face_recognition: False
             enable_action_recognition: True  # 新增配置项
             cross_direction:
               - "Left"
               - "Right"
-            enable_crossed_writer: True
-            enable_abnormal_writer: False # 后期拓展用
+            enable_crossed_writer: False
+            enable_abnormal_writer: True # 后期拓展用
 
 # 跟踪
 people tracker:
@@ -87,11 +87,11 @@ writer:
 # 动作识别
 action recognition:
   enable: true
-  model_path: "/home/wuhao@kemande.cn/work/02_Video_Classification/checkpoints_shop/SlowFast2/loss/best_loss_20.pth" # "C:/Users/admin/Desktop/work/02_Video_Classification/checkpoints_shop/SlowFast2/loss/best_loss_20.pth"
+  model_path: "slowfast.pth" # "C:/Users/admin/Desktop/work/02_Video_Classification/checkpoints_shop/SlowFast2/loss/best_loss_20.pth"
   num_classes: 4
   threshold: 0.6
-  clip_length: 32
+  clip_length: 64
   input_size: 224
-  prediction_interval: 0.5  # 预测间隔(秒)
+  prediction_interval: 16 # 帧数
   abnormal_actions: ["drinking","eating", "hiding", "tearing"]
 
