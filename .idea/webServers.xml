@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="b8e67b83-5fa9-4f0d-905e-4b04e5953578" name="ShopSystem">
+        <fileTransfer rootFolder="/home/wuhao@kemande.cn" accessType="SFTP" host="linux.kemande.cn" port="22" sshConfigId="5da59138-e346-4267-9336-d8f55e6a6fd0" sshConfig="WuHao@linux.kemande.cn:22 password">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>

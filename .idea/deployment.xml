@@ -23,17 +23,17 @@
           </mappings>
         </serverdata>
       </paths>
-      <paths name="WuHao@linux.kemande.cn:22 password">
+      <paths name="ShopSystem">
         <serverdata>
           <mappings>
-            <mapping deploy="/work/ShopMonitorSystemV2.0" local="$PROJECT_DIR$" web="/" />
+            <mapping deploy="/work/01_ShopMonitorSystemV2.0" local="$PROJECT_DIR$" web="/" />
           </mappings>
         </serverdata>
       </paths>
-      <paths name="WuHao@linux.kemande.cn:22 password (6)">
+      <paths name="WuHao@linux.kemande.cn:22 password">
         <serverdata>
           <mappings>
-            <mapping local="$PROJECT_DIR$" web="/" />
+            <mapping deploy="/home/wuhao@kemande.cn/work/01_ShopMonitorSystemV2.0" local="$PROJECT_DIR$" />
           </mappings>
         </serverdata>
       </paths>
