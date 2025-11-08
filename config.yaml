@@ -1,0 +1,98 @@
+# 功能参数
+enable_ui: True
+enable_debug: False
+
+manager:
+  restart_time: 3600
+
+silent_detected:
+  person_lock: 100
+
+ui:
+  max_qsize: 100
+
+# 数据提交
+url:
+  customerFaceRecordFile: "http://192.168.121.84:8082/ums/customerFaceRecordFile/create" # 录入
+  customerFaceRecognitionFile: "http://192.168.121.84:8082/ums/customerFaceRecognitionFile/create" # 识别
+  customerCrossFile: "http://192.168.121.84:8082/ums/customerCrossFile/create" # 跨越
+
+# 日志
+log:
+  format: "<green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green> | <level>{level: <8}</level> | <cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>"
+
+# 静态文件根目录
+static_root: "static" # "D:/dataset/static"
+static:
+  model: "pt"
+  log: "log"
+  video: "video"
+  image: "image"
+  face_images: "cropface"
+  face_features: "feature_test"
+
+# 相机
+camera:
+  max_qsize: 1
+  sensitivity: 0.02
+  group:
+    - group1:
+        enable_reid: False
+        enable_writer: True
+        device: 'cuda:0'
+        ip:
+          - name: "192.168.10.5"
+            port: "rtsp://admin:kemande1206@192.168.10.96/Streaming/Channels/101?cmip=192.168.10.5"
+            rate: 1
+            k: 850
+            enable_silent_detected: False
+            enable_face_record: False
+            enable_face_recognition: False
+            enable_action_recognition: True  # 新增配置项
+            cross_direction:
+#              - "Up"
+              - "Down"
+            enable_crossed_writer: False
+            enable_abnormal_writer: True
+
+# 跟踪
+people tracker:
+  model_path: "best(people)_s.pt"
+  max missing frames: 5  # 允许连续未出现的帧数阈值
+  max tracking frames: 30 # 最大跟踪帧数
+  max_duration_time: 3000 # 最大逗留时间
+
+# 重识别
+reid:
+  threshold: 0.15
+  max_features: 20
+  max_time_gap: 30
+
+# 人脸识别
+face recognition:
+  model: "buffalo_l"
+  threshold: 0.6  # 人脸识别阈值 越高越精确
+  max_query_times: 5  # 同一跟踪id最大人脸检测次数
+  using_average_face_verify: False # 启用用户平均脸做校验 (未开发)
+  max_face_save_nums: 10 # 新用户的人脸最大保存张数
+
+# 视频合成
+writer:
+  fps: 15
+  height: 1080
+  width: 1920
+  continue_frames_threshold: 25
+  previous_frames_threshold: 25
+
+
+# 动作识别
+action recognition:
+  enable: true
+  model_path: "slowfast.pth" # "C:/Users/admin/Desktop/work/02_Video_Classification/checkpoints_shop/SlowFast2/loss/best_loss_20.pth"
+  num_classes: 4
+  threshold: 0.8
+  clip_length: 64
+  input_size: 224
+  prediction_interval: 16 # 帧数
+  abnormal_actions: ["drinking","eating", "hiding", "tearing"]
+
